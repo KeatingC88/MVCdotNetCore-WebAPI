@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.EntityFrameworkCore;
 using dotNetCoreWebAPI.Data;
 
 
@@ -27,25 +21,19 @@ namespace dotNetCoreWebAPI
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //Creating a Global "Model.Repository" object for the application reference the Repository.
-            //services.AddTransient<Models.Repository>();//Injection Service Model (Extended Method).
+            //services.AddTransient<Models.Repository>();//(Extended Method for Test Data)
             services.AddDbContext<TripContext>(options => options.UseSqlite("Data Source = listOfTrips.db"));
-            //App default MVC
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            /*
-                *"Swagger"(SwashBuckle) https://github.com/domaindrivendev/Swashbuckle.AspNetCore
-            */
             services.AddSwaggerGen(options =>
                 options.SwaggerDoc("v1", new Info { Title = "Trip Tracker", Version = "v1" })
-            );//Use only Test/Sandbox Data only -- will C.R.U.D. if wired to a database.
+            );
         }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            //Must be above the app.Mvc() method or it will overwrite your current routes. This is testing in Swagger UI.            
+            //Must be above the app.Mvc() method.
             app.UseSwagger();
-            //Control when swagger's UI is exposed
+            //When Server is Hosting
             if (env.IsDevelopment() || env.IsStaging()) { 
                 app.UseSwaggerUI(options =>
                     options.SwaggerEndpoint("/swagger/v1/swagger.json", "Trip Tracker v1")
