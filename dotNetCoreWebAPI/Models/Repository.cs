@@ -17,7 +17,7 @@ namespace dotNetCoreWebAPI.Models
         //Controler for Data
         public List<Trip> Get()
         {
-            return listOfTrips;
+            return listOfTrips.ToList();
         }
         
         public Trip GetById(int id)
